@@ -1,7 +1,7 @@
 // 1.引入mongoose 模块 -- 用于操作mongodb数据库
 const mongoose = require('mongoose');
 // 2.使用引入模块自带的方法 connect 连接数据库
-const uri = 'mongodb://admin:123456@localhost/admin'
+const uri = 'mongodb://localhost/admin'
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
