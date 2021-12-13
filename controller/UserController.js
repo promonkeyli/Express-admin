@@ -1,18 +1,34 @@
 const { User } = require('../model')
 const jwt = require('../util/jwt');
+const {jwtSecret} = require("../config/config");
 
 // 用户登陆 controller
 exports.Login = async (req, res, next) => {
     try {
         // 数据验证
         const { username, password } = req.body.user;
-        User.findOne({username, password}, async (err, result) => {
+        User.findOne({username, password},
+             (err, result) => {
             if (result === null){
-                // 1. 如果用户名不存在 返回404 并返回错误信息 -- 用户不存在
+                // 1. 如果用户名不存在 返回400 并返回错误信息 -- 用户不存在
                 res.status(200).json({error:  true , message: "用户名或者密码有误！"})
             } else {
-               // 2. 如果用户存在 取出密码做对比 一致的话 生成token 返回token，否则 返回400 密码错误
-                res.status(200).json({success: true});
+               // 2. 用户存在-根据user-id 签发 token 连同 username 一起返回到前端
+                const { _id,  username } = result;
+                jwt.sign({ userId: _id }, jwtSecret, async (err, value) => {
+                    if (err !== null){ return res.status(500).end('token生成错误') }
+                    else {
+                        const token = `Bearer ${value}`;
+                        res.status(200).json(
+                            {
+                                username,
+                                token,
+                                error: false,
+                                message: '登陆成功'
+                            }
+                        );
+                    }
+                });
             }
         })
     }catch (e) {
