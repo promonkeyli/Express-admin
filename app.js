@@ -1,18 +1,26 @@
 const express = require('express');
-const router = require("./router/router");
+const router = require("./router");
 const app = new express();
 
-// 设置 request body 解析配置
-app.use(express.json()); // 配置解析json body 用于post
-app.use(express.urlencoded()); // 配置解析x-www-form-urlencoded body 用于post
+const morgan = require('morgan');
+const cors = require('cors')
 
-// 挂载路由
-// app.use(router);
+const { PORT } = require('./config/config');
 
-// 挂载路由实例 并限制路由访问前缀
-app.use('/todos', router);
+const err = require('./middle-ware/err');
+require('./util/jwt');
 
+// 1.打印日志中间件
+app.use(morgan('dev'));
+// 2.req 请求体解析配置
+app.use(express.json());
+// 3.设置允许跨域
+app.use(cors());
+// 4.路由注册
+app.use('/api', router);
+// 5.错误处理中间件
+app.use(err());
 // 端口监听
-app.listen(3000, () => {
-    console.log('listen 3000 serve is running !');
+app.listen(PORT, () => {
+    console.log(`listen ${ PORT } serve is running !`);
 })
