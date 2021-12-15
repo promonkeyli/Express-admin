@@ -11,6 +11,6 @@ router.post('/user/login', UserController.Login);
 router.post('/user/register', UserController.Register);
 
 // 获取当前用户
-router.get('/user/:uid', UserController.getCurrentUser);
+router.get('/user/:username', UserController.getCurrentUser);
 
 module.exports = router;

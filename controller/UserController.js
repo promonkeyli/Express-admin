@@ -1,6 +1,6 @@
 const { User } = require('../model')
 const jwt = require('../util/jwt');
-const {jwtSecret} = require("../config/config");
+const { jwtSecret } = require("../config/config");
 
 // 用户登陆 controller
 exports.Login = async (req, res, next) => {
@@ -62,10 +62,18 @@ exports.Register = async (req, res, next) => {
 // 获取当前用户 controller
 exports.getCurrentUser = async (req, res, next) => {
     try {
-        // 处理请求
-        // 响应状态
-        res.end(`getCurrentUser/${req.params.uid}`);
-
+        // 1.获取用户名参数
+        console.log(req.headers);
+        const { username } = req.params;
+        // 2.数据库users集合查询当前用户
+        User.findOne({ username }, async (error, result) => {
+            if (Object.keys(result).length !== 0){
+                // 2.1处理数据，用户的密码不用返回
+                const { _id , username } = result;
+                const userInfo = {userId: _id, username};
+                res.status(200).json({ userInfo });
+            }
+        })
     }catch (e) {
         next(e)
     }
