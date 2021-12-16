@@ -4,6 +4,8 @@ const userValidator = require('../validator/user');
 
 const UserController = require('../controller/UserController');
 
+const auth = require('../middle-ware/auth');
+
 // 用户登陆
 router.post('/user/login', UserController.Login);
 
@@ -11,6 +13,6 @@ router.post('/user/login', UserController.Login);
 router.post('/user/register', UserController.Register);
 
 // 获取当前用户
-router.get('/user/:username', UserController.getCurrentUser);
+router.get('/user', auth, UserController.getCurrentUser);
 
 module.exports = router;

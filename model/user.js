@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        set: value => md5(value) // 密码md5加密处理
+        set: value => md5(value), // 密码md5加密处理
+        select: false, // 默认不对密码进行查询
     }
 })
 

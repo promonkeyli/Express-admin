@@ -15,7 +15,9 @@ exports.Login = async (req, res, next) => {
             } else {
                // 2. 用户存在-根据user-id 签发 token 连同 username 一起返回到前端
                 const { _id,  username } = result;
-                jwt.sign({ userId: _id }, jwtSecret, async (err, value) => {
+                // 3. expiresIn 用于签发token设置过期时间 格式可以为 "2 days" 默认 秒
+                jwt.sign({ userId: _id }, jwtSecret, { expiresIn: '7D'},
+                    async (err, value) => {
                     if (err !== null){ return res.status(500).end('token生成错误') }
                     else {
                         const token = `Bearer ${value}`;
@@ -62,17 +64,8 @@ exports.Register = async (req, res, next) => {
 // 获取当前用户 controller
 exports.getCurrentUser = async (req, res, next) => {
     try {
-        // 1.获取用户名参数
-        console.log(req.headers);
-        const { username } = req.params;
-        // 2.数据库users集合查询当前用户
-        User.findOne({ username }, async (error, result) => {
-            if (Object.keys(result).length !== 0){
-                // 2.1处理数据，用户的密码不用返回
-                const { _id , username } = result;
-                const userInfo = {userId: _id, username};
-                res.status(200).json({ userInfo });
-            }
+        res.status(200).json({
+            user: req.user
         })
     }catch (e) {
         next(e)
